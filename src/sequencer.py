@@ -22,11 +22,20 @@ severity_by_window = (
     df_logs.groupby("window")["SeverityLevel"].max()
 )
 reverse_map = {v: k for k, v in severity_order.items()}
+severity_by_window_str = severity_by_window.map(reverse_map)
 
 event_matrix = event_matrix.merge(
     severity_by_window.rename("Severity"), on="window", how="left"
 )
 
+df_template = pd.read_csv("../resources/linux/log-templates/Linux.log_templates.csv")
+count = 0
+for event,severity in zip(df_template["EventId"], df_template["Severity"]):
+    if severity == "FAILURE":
+        count += 1
+        event_matrix = event_matrix.drop(event, axis=1)
+
+print(f"Dropped {count} FAILURE events from the event matrix.")
 
 event_matrix.columns = [f"E{i+1}" for i in range(event_matrix.shape[1] - 1)] + ["Severity"]
 event_matrix = event_matrix.reset_index()
