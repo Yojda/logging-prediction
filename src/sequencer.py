@@ -14,22 +14,21 @@ grouped = df_logs.groupby("window")["EventId"].apply(list)
 
 
 df_logs['Count'] = 1
-event_matrix = df_logs.pivot_table(index="window", columns="EventId", values="Count", aggfunc="sum").fillna(0)
+event_matrix = df_logs.pivot_table(index="window", columns="EventId", values="Count", aggfunc="sum").fillna(0).astype(int)
 
-severity_order = {"INFO": 1, "WARNING": 2, "FAILURE": 3}
+severity_order = {"INFO": 0, "FAILURE": 1}
 df_logs["SeverityLevel"] = df_logs["Severity"].map(severity_order)
 severity_by_window = (
     df_logs.groupby("window")["SeverityLevel"].max()
 )
 reverse_map = {v: k for k, v in severity_order.items()}
-severity_by_window = severity_by_window.map(reverse_map)
 
 event_matrix = event_matrix.merge(
     severity_by_window.rename("Severity"), on="window", how="left"
 )
 
 
-# event_matrix.columns = [f"E{i+1}" for i in range(event_matrix.shape[1])]
+event_matrix.columns = [f"E{i+1}" for i in range(event_matrix.shape[1] - 1)] + ["Severity"]
 event_matrix = event_matrix.reset_index()
 event_matrix.rename(columns={"window": "Sequence"}, inplace=True)
 event_matrix["Sequence"] = [f"S{i+1}" for i in range(event_matrix.shape[0])]
