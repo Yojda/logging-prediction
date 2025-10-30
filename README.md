@@ -6,7 +6,9 @@ The project is created by Yannis Ouakrim in the context of his master's degree i
 
 logging-prediction requires:
 
-- Python (>= 3.13)
+- Python (3.11)
+- FastAPI (0.120.2)
+- Logparser3 (1.0.4)
 
 ### Installation
 
