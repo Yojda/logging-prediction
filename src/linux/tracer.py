@@ -28,16 +28,17 @@ event_matrix = event_matrix.merge(
     severity_by_window.rename("Severity"), on="window", how="left"
 )
 
-df_template = pd.read_csv("../../resources/linux/log-templates/Linux.log_templates.csv")
+df_template = df_logs
 count = 0
 for event,severity in zip(df_template["EventId"], df_template["Severity"]):
     if severity == "FAILURE":
-        count += 1
-        event_matrix = event_matrix.drop(event, axis=1)
+        if event in event_matrix.columns:
+            event_matrix = event_matrix.drop(event, axis=1)
+            count += 1
 
 print(f"Dropped {count} FAILURE events from the event matrix.")
 
-event_matrix.columns = [f"E{i+1}" for i in range(event_matrix.shape[1] - 1)] + ["Severity"]
+# event_matrix.columns = [f"E{i+1}" for i in range(event_matrix.shape[1] - 1)] + ["Severity"]
 event_matrix = event_matrix.reset_index()
 event_matrix.rename(columns={"window": "Sequence"}, inplace=True)
 event_matrix["Sequence"] = [f"S{i+1}" for i in range(event_matrix.shape[0])]
@@ -49,8 +50,8 @@ ax = severity_counts.plot(kind='bar', color=['green', 'red'])
 ax.set_xlabel("Severity Level")
 ax.set_ylabel("Number of Sequences")
 plt.title("Distribution of Sequences by Severity Level")
-plt.savefig("../resources/images/severity_counts.png", dpi=300, bbox_inches="tight")
+plt.savefig("../../resources/images/severity_counts.png", dpi=300, bbox_inches="tight")
 
-event_matrix.to_csv("../resources/linux/log-structured/Linux.log_sequences.csv", index=False)
+event_matrix.to_csv("../../resources/linux/log-structured/Linux.log_sequences.csv", index=False)
 
 plt.show()
