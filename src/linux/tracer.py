@@ -2,7 +2,7 @@ import pandas as pd
 import ast
 import matplotlib.pyplot as plt
 
-df_logs = pd.read_csv("../resources/linux/log-templates/Linux.log_structured.csv")
+df_logs = pd.read_csv("../../resources/linux/log-templates/Linux.log_structured.csv")
 
 print(df_logs.columns)
 print(df_logs.shape)
@@ -28,7 +28,7 @@ event_matrix = event_matrix.merge(
     severity_by_window.rename("Severity"), on="window", how="left"
 )
 
-df_template = pd.read_csv("../resources/linux/log-templates/Linux.log_templates.csv")
+df_template = pd.read_csv("../../resources/linux/log-templates/Linux.log_templates.csv")
 count = 0
 for event,severity in zip(df_template["EventId"], df_template["Severity"]):
     if severity == "FAILURE":

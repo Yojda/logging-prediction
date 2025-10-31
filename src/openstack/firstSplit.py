@@ -1,0 +1,33 @@
+import pandas as pd
+import re
+
+# Example: load your parsed logs (assuming 'Message' column contains log text)
+with open("../../resources/openstack/log/OpenStack.log", "r", encoding="utf-8", errors="ignore") as f:
+    lines = f.readlines()
+
+df = pd.DataFrame(lines, columns=["Message"])
+print(df.head())
+
+print(df.columns)
+
+df["is_http"] = df["Message"].str.contains(r'HTTP/1.1', case=False, na=False)
+df["status_code"] = df["Message"].str.extract(r'status[:=]\s*(\d{3})')
+df["status_code"] = pd.to_numeric(df["status_code"], errors="coerce")
+
+df_requests = df[df["is_http"]].copy()
+df_others = df[~df["is_http"]].copy()
+
+# Drop helper columns (just in case)
+df_requests = df_requests.drop(columns=["is_http", "status_code", "RequestResult"], errors="ignore")
+df_others = df_others.drop(columns=["is_http", "status_code", "Category"], errors="ignore")
+
+# Remove possible embedded newlines from the log messages
+df_requests["Message"] = df_requests["Message"].str.strip()
+df_others["Message"] = df_others["Message"].str.strip()
+
+# Save manually joined logs — ensures no extra \n
+with open("../../resources/openstack/log/OpenStack_log_requests.log", "w", encoding="utf-8") as f:
+    f.write("\n".join(df_requests["Message"].tolist()))
+
+with open("../../resources/openstack/log/OpenStack_log_others.log", "w", encoding="utf-8") as f:
+    f.write("\n".join(df_others["Message"].tolist()))
