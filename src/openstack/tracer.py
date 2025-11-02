@@ -53,7 +53,7 @@ print(severity_counts)
 ax = severity_counts.plot(kind='bar', color=['green', 'red'])
 ax.set_xlabel("Severity Level")
 ax.set_ylabel("Number of Sequences")
-plt.title("Distribution of Sequences by Severity Level")
+plt.title("Distribution of Sequences by Severity Level in OpenStack Logs")
 plt.savefig("../../resources/images/severity_counts_openstack.png", dpi=300, bbox_inches="tight")
 
 event_matrix.to_csv("../../resources/openstack/log-structured/OpenStack.log_sequences.csv", index=False)

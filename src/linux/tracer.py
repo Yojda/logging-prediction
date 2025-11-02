@@ -9,7 +9,7 @@ print(df_logs.shape)
 
 df_logs["Time"] = pd.to_datetime(df_logs["Time"], format="%H:%M:%S")
 
-df_logs["window"] = (df_logs["Time"].dt.hour * 3600 + df_logs["Time"].dt.minute * 60 + df_logs["Time"].dt.second) // 15  # 10-seconds windows
+df_logs["window"] = (df_logs["Time"].dt.hour * 3600 + df_logs["Time"].dt.minute * 60 + df_logs["Time"].dt.second) // 15  # 15-seconds windows
 grouped = df_logs.groupby("window")["EventId"].apply(list)
 
 
@@ -49,7 +49,7 @@ print(severity_counts)
 ax = severity_counts.plot(kind='bar', color=['green', 'red'])
 ax.set_xlabel("Severity Level")
 ax.set_ylabel("Number of Sequences")
-plt.title("Distribution of Sequences by Severity Level")
+plt.title("Distribution of Sequences by Severity Level in Linux Logs")
 plt.savefig("../../resources/images/severity_counts.png", dpi=300, bbox_inches="tight")
 
 event_matrix.to_csv("../../resources/linux/log-structured/Linux.log_sequences.csv", index=False)

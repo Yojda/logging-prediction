@@ -1,7 +1,6 @@
 import pandas as pd
 
-FAILURE_WORDS = {"failure", "failed", "crash"}
-WARNING_WORDS = {"warning", "couldn't", "timed out", "critical"}
+FAILURE_WORDS = {"failure", "failed", "crash", "abnormally"}
 
 df = pd.read_csv("../../resources/linux/log-templates/Linux.log_structured.csv")
 
