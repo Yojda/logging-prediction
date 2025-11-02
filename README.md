@@ -7,7 +7,6 @@ The project is created by Yannis Ouakrim in the context of his master's degree i
 logging-prediction requires:
 
 - Python (3.11)
-- FastAPI
 - Logparser3
 - matplotlib
 
