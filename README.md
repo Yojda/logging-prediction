@@ -6,20 +6,28 @@ The project is created by Yannis Ouakrim in the context of his master's degree i
 
 logging-prediction requires:
 
-- Python (3.11)
-- Logparser3
+- python (3.11)
+- logparser3
 - matplotlib
+- jupyter
 
 ### Installation
 
 To install logging-prediction, clone the repository and install the required dependencies:
 
 ```bash
-git clone
+git clone git@github.com:Yojda/defect-prediction.git
 ```
 
 ### Usage
 
+To use logging-prediction, run the training jupyter notebook with the desired parameters:
+
+```bash
+jupyter lab
+```
+
+Then open the `training.ipynb` notebook and follow the instructions to train and evaluate the model.
 
 ### Development
 
@@ -61,5 +69,3 @@ There are various types of log messages, including:
 - API requests `<*> "GET <*>" status: <*> len: <*> time: <*>.<*>`
 - CRUD operations on instances `[instance: <*>] Deleting instance files <*>`
 - VM actions `[instance: <*>] VM Paused (Lifecycle Event)`
-
-### Testing
