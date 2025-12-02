@@ -24,3 +24,8 @@ def main(resources_dir):
 
     df_combined = pd.concat([df_requests, df_others], ignore_index=True)
     df_combined.to_csv(f'{output_dir}/OpenStack.log_structured.csv', index=False)
+
+if __name__ == "__main__":
+    from pathlib import Path
+    RESOURCES_DIR = Path(__file__).resolve().parents[2] / "resources"
+    main(RESOURCES_DIR)

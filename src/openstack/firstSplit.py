@@ -1,8 +1,16 @@
 import pandas as pd
 
 def main(resources_dir):
-    with open(f"{resources_dir}/openstack/log/OpenStack.log", "r", encoding="utf-8", errors="ignore") as f:
-        lines = f.readlines()
+    lines = []
+
+    with open(f"{resources_dir}/openstack/log/openstack_abnormal.log", "r", encoding="utf-8", errors="ignore") as f:
+        lines += f.readlines()
+
+    with open(f"{resources_dir}/openstack/log/openstack_normal1.log", "r", encoding="utf-8", errors="ignore") as f:
+        lines += f.readlines()
+
+    with open(f"{resources_dir}/openstack/log/openstack_normal2.log", "r", encoding="utf-8", errors="ignore") as f:
+        lines += f.readlines()
 
     df = pd.DataFrame(lines, columns=["Message"])
     print(df.head())
@@ -30,3 +38,8 @@ def main(resources_dir):
 
     with open(f"{resources_dir}/openstack/log/OpenStack_log_others.log", "w", encoding="utf-8") as f:
         f.write("\n".join(df_others["Message"].tolist()))
+
+if __name__ == "__main__":
+    from pathlib import Path
+    RESOURCES_DIR = Path(__file__).resolve().parents[2] / "resources"
+    main(RESOURCES_DIR)

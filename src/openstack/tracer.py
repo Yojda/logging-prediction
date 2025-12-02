@@ -8,44 +8,28 @@ def main(resources_dir):
     print(df_logs.columns)
     print(df_logs.shape)
 
-    df_logs["TraceId"] = df_logs["ADDR"].apply(lambda x: str(x).split(" ")[0])
+    fault_traceids = ["544fd51c-4edc-4780-baae-ba1d80a0acfc", "ae651dff-c7ad-43d6-ac96-bbcd820ccca8", "a445709b-6ad0-40ec-8860-bec60b6ca0c2", "1643649d-2f42-4303-bfcd-7798baec19f9"]
+
+    df_logs["Instance"] = df_logs["Content"].str.extract(r'instance:\s*([a-z0-9-]*)')
+    df_logs["Severity"] = df_logs["Instance"].apply(lambda t: 1 if t in fault_traceids else 0)
 
     print(df_logs)
 
-    grouped = df_logs.groupby("TraceId")["EventId"].apply(list)
+    grouped = df_logs.groupby("Instance")["EventId"].apply(list)
 
     print(grouped)
 
     df_logs['Count'] = 1
-    event_matrix = df_logs.pivot_table(index="TraceId", columns="EventId", values="Count", aggfunc="sum").fillna(0).astype(int)
+    event_matrix = df_logs.pivot_table(index="Instance", columns="EventId", values="Count", aggfunc="sum").fillna(0).astype(int)
 
-    severity_order = {"INFO": 0, "ERROR": 1}
-    df_logs["Severity"] = df_logs["Severity"].map(severity_order)
-    severity_by_window = (
-        df_logs.groupby("TraceId")["Severity"].max()
-    )
-    reverse_map = {v: k for k, v in severity_order.items()}
-    severity_by_window_str = severity_by_window.map(reverse_map)
-
-    event_matrix = event_matrix.merge(
-        severity_by_window.rename("Severity"), on="TraceId", how="left"
-    )
+    severity_by_instance = df_logs.groupby("Instance")["Severity"].max()
+    event_matrix["Severity"] = severity_by_instance
 
     print(event_matrix)
 
-    df_template = df_logs
-    count = 0
-    for event,severity in zip(df_template["EventId"], df_template["Severity"]):
-        if severity == 1:
-            if event in event_matrix.columns:
-                event_matrix = event_matrix.drop(event, axis=1)
-                count += 1
-
-    print(f"Dropped {count} ERROR events from the event matrix.")
-
     # event_matrix.columns = [f"E{i+1}" for i in range(event_matrix.shape[1] - 1)] + ["Severity"]
     event_matrix = event_matrix.reset_index()
-    event_matrix.rename(columns={"TraceId": "Sequence"}, inplace=True)
+    event_matrix.rename(columns={"Instance": "Sequence"}, inplace=True)
     event_matrix["Sequence"] = [f"S{i+1}" for i in range(event_matrix.shape[0])]
 
     severity_counts = event_matrix["Severity"].value_counts()
@@ -59,5 +43,8 @@ def main(resources_dir):
 
     event_matrix.to_csv(f"{resources_dir}/openstack/log-structured/OpenStack.log_sequences.csv", index=False)
 
-    if __name__ == "__main__":
-        plt.show()
+if __name__ == "__main__":
+    from pathlib import Path
+    RESOURCES_DIR = Path(__file__).resolve().parents[2] / "resources"
+    main(RESOURCES_DIR)
+    plt.show()
