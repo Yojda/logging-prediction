@@ -8,10 +8,10 @@ def main(resources_dir):
     print(df_logs.columns)
     print(df_logs.shape)
 
-    fault_traceids = ["544fd51c-4edc-4780-baae-ba1d80a0acfc", "ae651dff-c7ad-43d6-ac96-bbcd820ccca8", "a445709b-6ad0-40ec-8860-bec60b6ca0c2", "1643649d-2f42-4303-bfcd-7798baec19f9"]
+    fault_instances = ["544fd51c-4edc-4780-baae-ba1d80a0acfc", "ae651dff-c7ad-43d6-ac96-bbcd820ccca8", "a445709b-6ad0-40ec-8860-bec60b6ca0c2", "1643649d-2f42-4303-bfcd-7798baec19f9"]
 
     df_logs["Instance"] = df_logs["Content"].str.extract(r'instance:\s*([a-z0-9-]*)')
-    df_logs["Severity"] = df_logs["Instance"].apply(lambda t: 1 if t in fault_traceids else 0)
+    df_logs["Severity"] = df_logs["Instance"].apply(lambda t: 1 if t in fault_instances else 0)
 
     print(df_logs)
 

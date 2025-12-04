@@ -22,7 +22,9 @@ def main(resources_dir):
     df["status_code"] = pd.to_numeric(df["status_code"], errors="coerce")
 
     df_requests = df[df["is_http"]].copy()
+    print(len(df_requests))
     df_others = df[~df["is_http"]].copy()
+    print(len(df_others))
 
     # Drop helper columns (just in case)
     df_requests = df_requests.drop(columns=["is_http", "status_code", "RequestResult"], errors="ignore")
